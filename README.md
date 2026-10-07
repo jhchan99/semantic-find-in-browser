@@ -1,6 +1,1 @@
-# Semantic Finder
-
-1. `chrome://extensions` → Developer mode → **Load unpacked** → this folder
-2. Press `Alt+F` or click the toolbar icon
-
-If `Alt+F` is taken, set it at `chrome://extensions/shortcuts`.
+i want find to be just a little bit better, its already great, keyword search is fast and easy. But sometimes i dont know exactly what words im looking for so i need some sort of semantic search highlighting in my browser. I also dont really like tools like notebooklm or other types of llms for document searching because i often want to stay in the document im in, just be able to make more generic searches for topics i want to read about.
