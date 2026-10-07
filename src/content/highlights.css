@@ -1,0 +1,14 @@
+::highlight(sfb-related) {
+  background-color: #c4b5fd;
+  color: inherit;
+}
+
+::highlight(sfb-exact) {
+  background-color: #f1ea00;
+  color: #111;
+}
+
+::highlight(sfb-current) {
+  background-color: #ff9632;
+  color: #111;
+}
