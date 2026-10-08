@@ -13,7 +13,7 @@
   align-items: center;
   gap: 6px;
   padding: 8px 10px;
-  border-radius: 10px;
+  border-radius: 0;
   background: #1f1f23;
   color: #f4f4f5;
   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.28);
@@ -28,7 +28,7 @@
   width: 260px;
   height: 28px;
   border: 0;
-  border-radius: 6px;
+  border-radius: 0;
   padding: 0 10px;
   background: #2a2a31;
   color: #fafafa;
@@ -59,7 +59,7 @@
   min-width: 28px;
   padding: 0 7px;
   border: 0;
-  border-radius: 6px;
+  border-radius: 0;
   background: transparent;
   color: #e4e4e7;
   cursor: pointer;
@@ -79,12 +79,8 @@
 }
 
 .sfb-toggle[aria-pressed="true"] {
-  background: #6d28d9;
-  color: #fff;
-}
-
-.sfb-toggle[data-opt="meaning"][aria-pressed="true"] {
-  background: #5b21b6;
+  background: #d4d4d8;
+  color: #18181b;
 }
 
 .sfb-close {
