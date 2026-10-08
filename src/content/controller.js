@@ -1,4 +1,5 @@
 import { chunkDocument, logChunks } from "./chunker.js";
+import { hasIndex, indexPage } from "./embedder.js";
 import { createFindBar } from "./find-bar.js";
 import { clearHighlights } from "./highlights.js";
 
@@ -18,6 +19,9 @@ export class FindController {
     this.chunks = null;
     /** @type {Promise<import("./chunker.js").ChunkResult> | null} */
     this.chunking = null;
+    this.indexed = false;
+    /** @type {Promise<void> | null} */
+    this.embedding = null;
     this.options = { ...DEFAULT_OPTIONS };
     this.ready = this.init();
   }
@@ -45,13 +49,53 @@ export class FindController {
   async open() {
     await this.ready;
     this.bar?.open();
-    if (this.chunks) return;
+    this.bar?.setBusy("Reading page…");
     this.chunking ??= chunkDocument().then((result) => {
       this.chunks = result.chunks;
       logChunks(result);
       return result;
     });
     await this.chunking;
+    if (this.indexed) {
+      const status = await hasIndex();
+      if (status.n === (this.chunks?.length ?? 0)) {
+        this.syncBar();
+        return;
+      }
+      this.indexed = false;
+      this.embedding = null;
+    }
+    this.embedding ??= this.embedChunks().catch((error) => {
+      this.embedding = null;
+      this.indexed = false;
+      this.bar?.setBusy("Embed failed");
+      console.error("[sfb] embed failed", error);
+      throw error;
+    });
+    await this.embedding;
+  }
+
+  async embedChunks() {
+    const chunks = this.chunks ?? [];
+    const texts = chunks.map((chunk) => chunk.text);
+    const n = texts.length;
+    const t0 = performance.now();
+    this.bar?.setBusy(n === 0 ? "Indexing…" : `Indexing 0 / ${n}`);
+    const result = await indexPage(texts, (done, total) => {
+      this.bar?.setBusy(`Indexing ${done} / ${total}`);
+    });
+    this.indexed = true;
+    const ms = Math.round(performance.now() - t0);
+    console.log("[sfb] embedded", {
+      n: result.n,
+      ms,
+      device: result.device,
+      perSec: ms > 0 ? Math.round((result.n * 1000) / ms) : 0,
+      batch: `${result.batchSize} × ${result.batchCount}`,
+      batchMs: `${result.batchMin} / ${result.batchMedian} / ${result.batchMax}`,
+      bufferMB: result.bufferMB,
+    });
+    this.syncBar();
   }
 
   close() {

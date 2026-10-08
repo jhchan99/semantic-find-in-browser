@@ -153,6 +153,14 @@ export async function createFindBar(handlers) {
       prev.disabled = state.total === 0;
       next.disabled = state.total === 0;
     },
+    /**
+     * @param {string} message
+     */
+    setBusy(message) {
+      count.textContent = message;
+      prev.disabled = true;
+      next.disabled = true;
+    },
     open() {
       bar.hidden = false;
       input.focus();

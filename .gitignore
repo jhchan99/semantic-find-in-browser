@@ -6,3 +6,6 @@ node_modules/
 .cursor/
 .agents/
 skills-lock.json
+models/**/*.onnx
+wasm/
+src/offscreen/embedder.bundle.js
