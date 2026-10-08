@@ -1,3 +1,4 @@
+import { chunkDocument, logChunks } from "./chunker.js";
 import { createFindBar } from "./find-bar.js";
 import { clearHighlights } from "./highlights.js";
 
@@ -13,6 +14,10 @@ export class FindController {
   constructor() {
     /** @type {Awaited<ReturnType<typeof createFindBar>> | null} */
     this.bar = null;
+    /** @type {import("./chunker.js").Chunk[] | null} */
+    this.chunks = null;
+    /** @type {Promise<import("./chunker.js").ChunkResult> | null} */
+    this.chunking = null;
     this.options = { ...DEFAULT_OPTIONS };
     this.ready = this.init();
   }
@@ -40,6 +45,13 @@ export class FindController {
   async open() {
     await this.ready;
     this.bar?.open();
+    if (this.chunks) return;
+    this.chunking ??= chunkDocument().then((result) => {
+      this.chunks = result.chunks;
+      logChunks(result);
+      return result;
+    });
+    await this.chunking;
   }
 
   close() {
